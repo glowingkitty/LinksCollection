@@ -103,24 +103,14 @@ async function downloadAssets() {
     // Wait for all downloads to complete
     await Promise.all(downloads)
     
-    // Create a new .env.local with local paths for production
-    const envContent = `# Auto-generated during build - DO NOT EDIT
-# Original URLs downloaded to local assets
-
-NEXT_PUBLIC_PROFILE_NAME="${process.env.NEXT_PUBLIC_PROFILE_NAME}"
-NEXT_PUBLIC_PROFILE_BIO="${process.env.NEXT_PUBLIC_PROFILE_BIO}"
-NEXT_PUBLIC_PROFILE_IMAGE="/assets/profile-image.jpg"
-NEXT_PUBLIC_CONTACT_NAME_SVG="/assets/contact-name.svg"
-NEXT_PUBLIC_CONTACT_STREET_SVG="/assets/contact-street.svg"
-NEXT_PUBLIC_CONTACT_CITY_SVG="/assets/contact-city.svg"
-NEXT_PUBLIC_CONTACT_COUNTRY_SVG="/assets/contact-country.svg"
-NEXT_PUBLIC_CONTACT_EMAIL="${process.env.NEXT_PUBLIC_CONTACT_EMAIL}"
-NEXT_PUBLIC_WEBSITE_URL="${process.env.NEXT_PUBLIC_WEBSITE_URL}"
-NEXT_PUBLIC_LINKS='${process.env.NEXT_PUBLIC_LINKS}'
-`
+    // Update environment variables for the current process
+    process.env.NEXT_PUBLIC_PROFILE_IMAGE = '/assets/profile-image.jpg'
+    process.env.NEXT_PUBLIC_CONTACT_NAME_SVG = '/assets/contact-name.svg'
+    process.env.NEXT_PUBLIC_CONTACT_STREET_SVG = '/assets/contact-street.svg'
+    process.env.NEXT_PUBLIC_CONTACT_CITY_SVG = '/assets/contact-city.svg'
+    process.env.NEXT_PUBLIC_CONTACT_COUNTRY_SVG = '/assets/contact-country.svg'
     
-    fs.writeFileSync(path.join(__dirname, '..', '.env.production'), envContent)
-    console.log('📝 Created production environment file')
+    console.log('📝 Updated environment variables for local assets')
     
     console.log('✅ All assets downloaded successfully!')
     
