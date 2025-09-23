@@ -56,8 +56,11 @@ async function downloadAssets() {
   try {
     console.log('🚀 Starting asset download...')
     
-    // Load environment variables from .env.local
-    require('dotenv').config({ path: path.join(__dirname, '..', '.env.local') })
+    // Load environment variables from .env.local (if it exists)
+    const envPath = path.join(__dirname, '..', '.env.local')
+    if (fs.existsSync(envPath)) {
+      require('dotenv').config({ path: envPath })
+    }
     
     // Get URLs from environment variables
     const profileImageUrl = process.env.NEXT_PUBLIC_PROFILE_IMAGE
