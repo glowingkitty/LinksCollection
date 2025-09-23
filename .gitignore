@@ -37,5 +37,5 @@ yarn-error.log*
 next-env.d.ts
 
 # Downloaded assets (auto-generated during build)
-public/assets/
+public
 .env.production

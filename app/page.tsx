@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import { getProfileImagePath } from './utils/asset-utils'
 
 // Interface for link data structure
 interface LinkData {
@@ -30,7 +31,7 @@ export default function Home() {
     // Load profile data from environment variables
     const profileName = process.env.NEXT_PUBLIC_PROFILE_NAME || 'Your Name'
     const profileBio = process.env.NEXT_PUBLIC_PROFILE_BIO || 'Your bio or description'
-    const profileImage = process.env.NEXT_PUBLIC_PROFILE_IMAGE || '/default-avatar.png'
+    const profileImage = getProfileImagePath()
     
     setProfile({
       name: profileName,

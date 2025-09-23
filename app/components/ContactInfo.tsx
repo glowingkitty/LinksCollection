@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { getContactSvgPaths } from '../utils/asset-utils'
 
 interface ContactInfoProps {
   className?: string
@@ -22,26 +23,14 @@ export default function ContactInfo({ className = '' }: ContactInfoProps) {
         setIsLoading(true)
         setError(null)
 
-        // Get SVG URLs from environment variables
-        const nameSvgUrl = process.env.NEXT_PUBLIC_CONTACT_NAME_SVG
-        const streetSvgUrl = process.env.NEXT_PUBLIC_CONTACT_STREET_SVG
-        const citySvgUrl = process.env.NEXT_PUBLIC_CONTACT_CITY_SVG
-        const countrySvgUrl = process.env.NEXT_PUBLIC_CONTACT_COUNTRY_SVG
+        // Get SVG paths, preferring local assets
+        const svgPaths = getContactSvgPaths()
 
-        if (!nameSvgUrl || !streetSvgUrl || !citySvgUrl || !countrySvgUrl) {
-          throw new Error('Contact SVG URLs not configured')
-        }
+        setSvgUrls(svgPaths)
 
-        setSvgUrls({
-          name: nameSvgUrl,
-          street: streetSvgUrl,
-          city: citySvgUrl,
-          country: countrySvgUrl
-        })
-
-        console.log('Contact SVG URLs loaded successfully')
+        console.log('Contact SVG paths loaded successfully:', svgPaths)
       } catch (err) {
-        console.error('Error loading SVG URLs:', err)
+        console.error('Error loading SVG paths:', err)
         setError(err instanceof Error ? err.message : 'Failed to load contact information')
       } finally {
         setIsLoading(false)
@@ -66,12 +55,50 @@ export default function ContactInfo({ className = '' }: ContactInfoProps) {
 
   if (error) {
     console.warn('Contact info loading failed, using fallback:', error)
+    // Try to use local assets even in error state
+    const fallbackPaths = getContactSvgPaths()
     return (
-      <div className={`text-white/90 space-y-2 ${className}`}>
-        <p><strong>Name:</strong> {process.env.NEXT_PUBLIC_PROFILE_NAME || 'Contact Name'}</p>
-        <p><strong>Address:</strong> Street Address</p>
-        <p><strong>Location:</strong> City, ZIP</p>
-        <p><strong>Country:</strong> Country</p>
+      <div className={`text-white/90 space-y-4 ${className}`}>
+        <div className="flex items-center space-x-2">
+          <strong>Name:</strong>
+          <img 
+            src={fallbackPaths.name} 
+            alt="Contact Name" 
+            className="h-5 w-auto filter invert pointer-events-none select-none"
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
+          />
+        </div>
+        <div className="flex items-center space-x-2">
+          <strong>Address:</strong>
+          <img 
+            src={fallbackPaths.street} 
+            alt="Street Address" 
+            className="h-5 w-auto filter invert pointer-events-none select-none"
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
+          />
+        </div>
+        <div className="flex items-center space-x-2">
+          <strong>Location:</strong>
+          <img 
+            src={fallbackPaths.city} 
+            alt="City and ZIP" 
+            className="h-5 w-auto filter invert pointer-events-none select-none"
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
+          />
+        </div>
+        <div className="flex items-center space-x-2">
+          <strong>Country:</strong>
+          <img 
+            src={fallbackPaths.country} 
+            alt="Country" 
+            className="h-5 w-auto filter invert pointer-events-none select-none"
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
+          />
+        </div>
       </div>
     )
   }

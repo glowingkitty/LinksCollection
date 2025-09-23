@@ -3,6 +3,7 @@
 const fs = require('fs')
 const path = require('path')
 const https = require('https')
+const sharp = require('sharp')
 
 /**
  * Download assets from GitHub during build process
@@ -14,6 +15,61 @@ const ASSETS_DIR = path.join(__dirname, '..', 'public', 'assets')
 // Ensure assets directory exists
 if (!fs.existsSync(ASSETS_DIR)) {
   fs.mkdirSync(ASSETS_DIR, { recursive: true })
+}
+
+/**
+ * Generate favicon from profile image
+ */
+async function generateFavicon(profileImagePath) {
+  try {
+    console.log('🎨 Generating favicon from profile image...')
+    
+    // Generate multiple favicon sizes
+    const faviconSizes = [
+      { size: 16, name: 'favicon-16x16.png' },
+      { size: 32, name: 'favicon-32x32.png' },
+      { size: 48, name: 'favicon-48x48.png' },
+      { size: 64, name: 'favicon-64x64.png' },
+      { size: 96, name: 'favicon-96x96.png' },
+      { size: 128, name: 'favicon-128x128.png' },
+      { size: 192, name: 'favicon-192x192.png' },
+      { size: 256, name: 'favicon-256x256.png' }
+    ]
+    
+    const publicDir = path.join(__dirname, '..', 'public')
+    
+    // Generate each favicon size
+    for (const { size, name } of faviconSizes) {
+      const outputPath = path.join(publicDir, name)
+      await sharp(profileImagePath)
+        .resize(size, size, { fit: 'cover' })
+        .png()
+        .toFile(outputPath)
+      console.log(`✅ Generated: ${name}`)
+    }
+    
+    // Generate ICO file (favicon.ico) - 32x32 size
+    const icoPath = path.join(publicDir, 'favicon.ico')
+    await sharp(profileImagePath)
+      .resize(32, 32, { fit: 'cover' })
+      .png()
+      .toFile(icoPath)
+    console.log('✅ Generated: favicon.ico')
+    
+    // Generate Apple touch icon
+    const appleTouchPath = path.join(publicDir, 'apple-touch-icon.png')
+    await sharp(profileImagePath)
+      .resize(180, 180, { fit: 'cover' })
+      .png()
+      .toFile(appleTouchPath)
+    console.log('✅ Generated: apple-touch-icon.png')
+    
+    console.log('🎨 Favicon generation completed!')
+    
+  } catch (error) {
+    console.error('❌ Error generating favicon:', error)
+    throw error
+  }
 }
 
 /**
@@ -103,14 +159,26 @@ async function downloadAssets() {
     // Wait for all downloads to complete
     await Promise.all(downloads)
     
-    // Update environment variables for the current process
-    process.env.NEXT_PUBLIC_PROFILE_IMAGE = '/assets/profile-image.jpg'
-    process.env.NEXT_PUBLIC_CONTACT_NAME_SVG = '/assets/contact-name.svg'
-    process.env.NEXT_PUBLIC_CONTACT_STREET_SVG = '/assets/contact-street.svg'
-    process.env.NEXT_PUBLIC_CONTACT_CITY_SVG = '/assets/contact-city.svg'
-    process.env.NEXT_PUBLIC_CONTACT_COUNTRY_SVG = '/assets/contact-country.svg'
+    // Generate favicon from the downloaded profile image
+    const profileImagePath = path.join(ASSETS_DIR, 'profile-image.jpg')
+    if (fs.existsSync(profileImagePath)) {
+      await generateFavicon(profileImagePath)
+    }
     
-    console.log('📝 Updated environment variables for local assets')
+    // Create a marker file to indicate that local assets are available
+    const markerPath = path.join(__dirname, '..', 'public', 'assets', '.local-assets-available')
+    fs.writeFileSync(markerPath, JSON.stringify({
+      timestamp: new Date().toISOString(),
+      assets: [
+        'profile-image.jpg',
+        'contact-name.svg',
+        'contact-street.svg',
+        'contact-city.svg',
+        'contact-country.svg'
+      ]
+    }, null, 2))
+    
+    console.log('📝 Created marker file for local assets')
     
     console.log('✅ All assets downloaded successfully!')
     
