@@ -5,6 +5,13 @@ const nextConfig = {
   },
   typescript: {
     ignoreBuildErrors: true,
+  },
+  // Remove output: 'standalone' as it can cause issues with Vercel
+  // Add trailing slash for better routing
+  trailingSlash: false,
+  // Ensure proper image optimization
+  images: {
+    unoptimized: true
   }
 }
 
