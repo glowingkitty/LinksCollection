@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { getProfileImagePath } from './utils/asset-utils'
 import { formatBioForDisplay } from './utils/bio-utils'
+import ShareButton from './components/ShareButton'
 
 // Interface for link data structure
 interface LinkData {
@@ -144,6 +145,11 @@ export default function Home() {
                 </div>
               </button>
             ))}
+          </div>
+
+          {/* Share Button */}
+          <div className="mt-6">
+            <ShareButton />
           </div>
 
           {/* Footer */}
