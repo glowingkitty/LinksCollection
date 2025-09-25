@@ -4,11 +4,15 @@ import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
+// Get profile data from environment variables for metadata
+const profileName = process.env.NEXT_PUBLIC_PROFILE_NAME || 'Your Name'
+const profileBio = process.env.NEXT_PUBLIC_PROFILE_BIO || 'Your bio or description'
+
 export const metadata: Metadata = {
-  title: 'Links Collection',
-  description: 'A beautiful Linktree-like page to showcase your links',
+  title: profileName,
+  description: profileBio,
   keywords: 'links, social media, portfolio, bio link',
-  authors: [{ name: 'Your Name' }],
+  authors: [{ name: profileName }],
   icons: {
     icon: [
       { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
@@ -26,14 +30,14 @@ export const metadata: Metadata = {
     shortcut: '/favicon.ico',
   },
   openGraph: {
-    title: 'Links Collection',
-    description: 'A beautiful Linktree-like page to showcase your links',
+    title: profileName,
+    description: profileBio,
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Links Collection',
-    description: 'A beautiful Linktree-like page to showcase your links',
+    title: profileName,
+    description: profileBio,
   },
 }
 

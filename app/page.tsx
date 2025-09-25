@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { getProfileImagePath } from './utils/asset-utils'
 import { formatBioForDisplay } from './utils/bio-utils'
 import ShareButton from './components/ShareButton'
+import DownloadButton from './components/DownloadButton'
 
 // Interface for link data structure
 interface LinkData {
@@ -16,6 +17,7 @@ interface LinkData {
 // Interface for profile data
 interface ProfileData {
   name: string
+  firstname: string
   bio: string
   image: string
 }
@@ -23,6 +25,7 @@ interface ProfileData {
 export default function Home() {
   const [profile, setProfile] = useState<ProfileData>({
     name: 'Your Name',
+    firstname: 'Your First Name',
     bio: 'Your bio or description',
     image: '/default-avatar.png'
   })
@@ -32,11 +35,13 @@ export default function Home() {
   useEffect(() => {
     // Load profile data from environment variables
     const profileName = process.env.NEXT_PUBLIC_PROFILE_NAME || 'Your Name'
+    const profileFirstname = process.env.NEXT_PUBLIC_FIRSTNAME || ''
     const profileBio = process.env.NEXT_PUBLIC_PROFILE_BIO || 'Your bio or description'
     const profileImage = getProfileImagePath()
     
     setProfile({
       name: profileName,
+      firstname: profileFirstname,
       bio: profileBio,
       image: profileImage
     })
@@ -110,6 +115,13 @@ export default function Home() {
             <h1 className="text-3xl font-bold text-white mb-2">
               {profile.name}
             </h1>
+
+            {/* First Name Greeting */}
+            {profile.firstname && (
+              <p className="text-white/80 text-lg mb-1">
+                Actual name: {profile.firstname}
+              </p>
+            )}
             
             {/* Profile Bio */}
             <p className="text-white/90 text-lg mb-8">
@@ -147,8 +159,13 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Share Button */}
+          {/* Download Button */}
           <div className="mt-6">
+            <DownloadButton />
+          </div>
+
+          {/* Share Button */}
+          <div className="mt-4">
             <ShareButton />
           </div>
 
