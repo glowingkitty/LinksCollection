@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { getProfileImagePath } from './utils/asset-utils'
+import { formatBioForDisplay } from './utils/bio-utils'
 
 // Interface for link data structure
 interface LinkData {
@@ -111,7 +112,15 @@ export default function Home() {
             
             {/* Profile Bio */}
             <p className="text-white/90 text-lg mb-8">
-              {profile.bio}
+              {(() => {
+                const bioSegments = formatBioForDisplay(profile.bio)
+                return bioSegments.map((segment, index) => (
+                  <span key={index}>
+                    {segment}
+                    {index < bioSegments.length - 1 && <br />}
+                  </span>
+                ))
+              })()}
             </p>
           </div>
 
