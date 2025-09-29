@@ -24,7 +24,7 @@ export default function DownloadButton({ className = '' }: DownloadButtonProps) 
   const [isDownloading, setIsDownloading] = useState(false)
 
   // Generate vCard content from environment data
-  const generateVCard = (): string => {
+  const generateVCard = async (): Promise<string> => {
     console.log('Generating vCard from environment data')
     
     // Get data from environment variables
@@ -33,6 +33,7 @@ export default function DownloadButton({ className = '' }: DownloadButtonProps) 
     const bio = process.env.NEXT_PUBLIC_PROFILE_BIO || 'Your bio or description'
     const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL || ''
     const website = process.env.NEXT_PUBLIC_WEBSITE_URL || ''
+    const profileImage = process.env.NEXT_PUBLIC_PROFILE_IMAGE || ''
     
     // Parse links from environment
     let links: Array<{ title: string; url: string; icon?: string }> = []
@@ -42,6 +43,28 @@ export default function DownloadButton({ className = '' }: DownloadButtonProps) 
       console.log('Parsed links for vCard:', links)
     } catch (error) {
       console.error('Error parsing links for vCard:', error)
+    }
+
+    // Fetch and convert profile image to base64 if available
+    let imageBase64 = ''
+    if (profileImage) {
+      try {
+        console.log('Fetching profile image for embedding:', profileImage)
+        const response = await fetch(profileImage)
+        if (response.ok) {
+          const arrayBuffer = await response.arrayBuffer()
+          const uint8Array = new Uint8Array(arrayBuffer)
+          const base64 = btoa(String.fromCharCode.apply(null, Array.from(uint8Array)))
+          imageBase64 = base64
+          console.log('Successfully converted image to base64')
+        } else {
+          console.warn('Failed to fetch profile image:', response.status)
+        }
+      } catch (error) {
+        console.error('Error fetching profile image:', error)
+        // Fallback to URL if image fetch fails
+        imageBase64 = profileImage
+      }
     }
 
     // Generate vCard content
@@ -63,6 +86,22 @@ export default function DownloadButton({ className = '' }: DownloadButtonProps) 
     
     if (website) {
       vcard += `URL:${website}\n`
+    }
+    
+    // Add profile image if available
+    if (imageBase64) {
+      // Determine image type from the original URL or default to JPEG
+      let imageType = 'JPEG'
+      if (profileImage) {
+        const extension = profileImage.split('.').pop()?.toLowerCase()
+        if (extension === 'png') imageType = 'PNG'
+        else if (extension === 'gif') imageType = 'GIF'
+        else if (extension === 'webp') imageType = 'WEBP'
+      }
+      
+      // Embed the image as base64 data in vCard format
+      vcard += `PHOTO;ENCODING=b;TYPE=${imageType}:${imageBase64}\n`
+      console.log('Added embedded profile image to vCard (base64)')
     }
     
     // Add bio as note
@@ -89,8 +128,8 @@ export default function DownloadButton({ className = '' }: DownloadButtonProps) 
       setIsDownloading(true)
       console.log('Starting contact book download')
       
-      // Generate vCard content
-      const vcardContent = generateVCard()
+      // Generate vCard content (now async)
+      const vcardContent = await generateVCard()
       
       // Create blob and download
       const blob = new Blob([vcardContent], { type: 'text/vcard;charset=utf-8' })

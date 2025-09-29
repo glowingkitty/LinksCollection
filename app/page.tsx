@@ -137,6 +137,11 @@ export default function Home() {
             </p>
           </div>
 
+          {/* Download Button */}
+          <div className="mt-6">
+            <DownloadButton />
+          </div>
+
           {/* Links Section */}
           <div className="space-y-4">
             {links.map((link, index) => (
@@ -157,11 +162,6 @@ export default function Home() {
                 </div>
               </button>
             ))}
-          </div>
-
-          {/* Download Button */}
-          <div className="mt-6">
-            <DownloadButton />
           </div>
 
           {/* Share Button */}
