@@ -143,7 +143,7 @@ export default function Home() {
           </div>
 
           {/* Links Section */}
-          <div className="space-y-4">
+          <div className="mt-8 space-y-4">
             {links.map((link, index) => (
               <button
                 key={index}
