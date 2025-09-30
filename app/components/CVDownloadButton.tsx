@@ -18,7 +18,12 @@ export default function CVDownloadButton({
   
   // Check if CV is available (either locally or via URL)
   const cvUrl = process.env.NEXT_PUBLIC_CV_PDF_URL
-  const isCvAvailable = cvUrl || true // Assume local file exists if no URL provided
+  const isCvAvailable = cvUrl && cvUrl.startsWith('http')
+  
+  // Don't render the button if no CV URL is provided
+  if (!isCvAvailable) {
+    return null
+  }
 
   // Handle CV download button click
   const handleCVDownloadClick = async () => {
@@ -29,19 +34,11 @@ export default function CVDownloadButton({
       // Create download link for the CV file
       const link = document.createElement('a')
       
-      // Use external URL if available, otherwise use local file
-      if (cvUrl && cvUrl.startsWith('http')) {
-        link.href = cvUrl
-        link.target = '_blank'
-        console.log('Using external CV URL:', cvUrl)
-      } else {
-        // For Vercel, files in public/ directory are served from root
-        link.href = `/${cvFileName}` // CV files should be in public/ directory for Vercel
-        link.target = '_blank' // Open in new tab as fallback
-        console.log('Using local CV file:', cvFileName)
-      }
-      
+      // Since we only show the button when URL is available, use the URL
+      link.href = cvUrl
+      link.target = '_blank'
       link.download = cvFileName
+      console.log('Using external CV URL:', cvUrl)
       
       // Trigger download
       document.body.appendChild(link)
