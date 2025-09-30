@@ -6,6 +6,7 @@ import { getProfileImagePath } from './utils/asset-utils'
 import { formatBioForDisplay } from './utils/bio-utils'
 import ShareButton from './components/ShareButton'
 import DownloadButton from './components/DownloadButton'
+import CVDownloadButton from './components/CVDownloadButton'
 
 // Interface for link data structure
 interface LinkData {
@@ -137,9 +138,13 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Download Button */}
-          <div className="mt-6">
+          {/* Download Buttons */}
+          <div className="mt-6 space-y-4">
             <DownloadButton />
+            <CVDownloadButton 
+              cvFileName="cv.pdf"
+              cvDisplayName="CV"
+            />
           </div>
 
           {/* Links Section */}

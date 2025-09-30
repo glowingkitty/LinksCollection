@@ -200,7 +200,7 @@ export default function DownloadButton({ className = '' }: DownloadButtonProps) 
           </svg>
         )}
         <span className="text-white font-semibold text-lg">
-          {isDownloading ? 'Downloading...' : 'Download'}
+          {isDownloading ? 'Downloading...' : 'Download contact'}
         </span>
       </div>
     </button>

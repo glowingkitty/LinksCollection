@@ -120,6 +120,7 @@ async function downloadAssets() {
     
     // Get URLs from environment variables
     const profileImageUrl = process.env.NEXT_PUBLIC_PROFILE_IMAGE
+    const cvPdfUrl = process.env.NEXT_PUBLIC_CV_PDF_URL
     const contactNameSvgUrl = process.env.NEXT_PUBLIC_CONTACT_NAME_SVG
     const contactStreetSvgUrl = process.env.NEXT_PUBLIC_CONTACT_STREET_SVG
     const contactCitySvgUrl = process.env.NEXT_PUBLIC_CONTACT_CITY_SVG
@@ -132,6 +133,14 @@ async function downloadAssets() {
       const profileImagePath = path.join(ASSETS_DIR, 'profile-image.jpg')
       downloads.push(
         downloadFile(profileImageUrl, profileImagePath)
+      )
+    }
+    
+    // Download CV PDF
+    if (cvPdfUrl && cvPdfUrl.startsWith('http')) {
+      const cvPdfPath = path.join(__dirname, '..', 'public', 'cv.pdf')
+      downloads.push(
+        downloadFile(cvPdfUrl, cvPdfPath)
       )
     }
     
@@ -167,15 +176,22 @@ async function downloadAssets() {
     
     // Create a marker file to indicate that local assets are available
     const markerPath = path.join(__dirname, '..', 'public', 'assets', '.local-assets-available')
+    const assets = [
+      'profile-image.jpg',
+      'contact-name.svg',
+      'contact-street.svg',
+      'contact-city.svg',
+      'contact-country.svg'
+    ]
+    
+    // Add CV PDF to assets list if it was downloaded
+    if (cvPdfUrl && cvPdfUrl.startsWith('http')) {
+      assets.push('cv.pdf')
+    }
+    
     fs.writeFileSync(markerPath, JSON.stringify({
       timestamp: new Date().toISOString(),
-      assets: [
-        'profile-image.jpg',
-        'contact-name.svg',
-        'contact-street.svg',
-        'contact-city.svg',
-        'contact-country.svg'
-      ]
+      assets: assets
     }, null, 2))
     
     console.log('📝 Created marker file for local assets')
