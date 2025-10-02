@@ -78,12 +78,7 @@ export default function Home() {
     setIsLoading(false)
   }, [])
 
-  // Handle link click with analytics tracking
-  const handleLinkClick = (link: LinkData) => {
-    console.log(`Link clicked: ${link.title} -> ${link.url}`)
-    // You can add analytics tracking here if needed
-    window.open(link.url, '_blank', 'noopener,noreferrer')
-  }
+  // Note: Links are now proper <a> tags for better accessibility and right-click functionality
 
   if (isLoading) {
     return (
@@ -150,10 +145,12 @@ export default function Home() {
           {/* Links Section */}
           <div className="mt-8 space-y-4">
             {links.map((link, index) => (
-              <button
+              <a
                 key={index}
-                onClick={() => handleLinkClick(link)}
-                className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 hover:bg-white/20 transition-all duration-300 hover:scale-105 hover:shadow-xl group"
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 hover:bg-white/20 transition-all duration-300 hover:scale-105 hover:shadow-xl group block"
               >
                 <div className="flex items-center justify-center space-x-3">
                   {link.icon && (
@@ -165,7 +162,7 @@ export default function Home() {
                     {link.title}
                   </span>
                 </div>
-              </button>
+              </a>
             ))}
           </div>
 
